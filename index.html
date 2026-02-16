@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>따님을 위한 마법 쿠키 제작소</title>
+    <title>따님을 위한 케이크 배달 본부</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #fff5f5;
+            background-color: #fff0f5;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -16,171 +16,165 @@
             touch-action: none;
         }
 
-        h1 { color: #ff85a2; margin-top: 20px; text-shadow: 1px 1px 2px white; }
+        h1 { color: #ff69b4; margin-top: 15px; }
 
-        /* 오븐 판 */
-        #game-container {
-            position: relative;
-            width: 350px;
-            height: 350px;
-            background-color: #ddd;
-            border: 15px solid #555;
+        /* 스테이지 관리 */
+        .stage { display: none; flex-direction: column; align-items: center; width: 100%; }
+        .stage.active { display: flex; }
+
+        /* 1단계: 케이크 꾸미기 */
+        #cake-base {
+            width: 250px;
+            height: 180px;
+            background: #fff; /* 생크림 */
             border-radius: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: inset 0 0 50px rgba(0,0,0,0.2);
-            margin: 20px;
-        }
-
-        #cookie {
-            width: 200px;
-            height: 200px;
-            background-color: #f3d5b5; /* 반죽 색 */
-            border-radius: 50%;
-            transition: background-color 2s, transform 0.5s;
             position: relative;
-            box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 0 #eee, 0 20px 0 #ddd;
+            margin: 40px;
         }
 
-        /* 구워졌을 때 색상 */
-        #cookie.baked {
-            background-color: #c68642;
+        .topping-bar {
+            display: flex; gap: 15px; padding: 15px;
+            background: white; border-radius: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
-        /* 토핑 리스트 */
-        #topping-bar {
-            display: flex;
-            gap: 20px;
-            padding: 15px;
-            background: white;
-            border-radius: 50px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
-        .topping-item {
-            font-size: 40px;
-            cursor: grab;
-            user-select: none;
-        }
+        .topping-item { font-size: 40px; cursor: grab; }
 
         .placed-topping {
-            position: absolute;
-            font-size: 30px;
-            pointer-events: none; /* 쿠키 위에 올라간 뒤에는 클릭 방해 안 되게 */
+            position: absolute; font-size: 35px; pointer-events: none;
             transform: translate(-50%, -50%);
         }
 
-        /* 조작 버튼 */
-        .controls {
-            margin-top: 30px;
+        /* 2단계: 포장하기 */
+        #box-container {
+            width: 300px;
+            height: 250px;
+            border: 5px dashed #ffb6c1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background: white;
         }
 
+        .ribbon {
+            position: absolute; width: 100%; height: 20px;
+            background: #ff1493; display: none;
+        }
+
+        /* 3단계: 배달하기 (애니메이션) */
+        #delivery-scene {
+            font-size: 80px;
+            position: relative;
+            width: 100%;
+            height: 200px;
+        }
+        #scooter {
+            position: absolute; left: -100px;
+            transition: left 3s linear;
+        }
+
+        /* 공통 버튼 */
         button {
-            padding: 15px 30px;
-            font-size: 18px;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            background-color: #ff85a2;
-            color: white;
-            font-weight: bold;
-            box-shadow: 0 4px 0 #d66d87;
-            transition: 0.1s;
-        }
-
-        button:active {
-            transform: translateY(4px);
-            box-shadow: none;
+            margin-top: 20px; padding: 15px 40px; font-size: 20px;
+            border: none; border-radius: 30px; background: #ff69b4;
+            color: white; cursor: pointer; font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-    <h1>🍪 나만의 쿠키 만들기</h1>
+    <h1 id="status-text">🎂 케이크를 꾸며요!</h1>
 
-    <div id="game-container">
-        <div id="cookie"></div>
+    <div id="stage1" class="stage active">
+        <div id="cake-base"></div>
+        <div class="topping-bar">
+            <div class="topping-item" draggable="true" ondragstart="drag(event)">🍓</div>
+            <div class="topping-item" draggable="true" ondragstart="drag(event)">🫐</div>
+            <div class="topping-item" draggable="true" ondragstart="drag(event)">🕯️</div>
+            <div class="topping-item" draggable="true" ondragstart="drag(event)">💖</div>
+        </div>
+        <button onclick="goStage2()">포장하기 👉</button>
     </div>
 
-    <div id="topping-bar">
-        <div class="topping-item" draggable="true" ondragstart="drag(event)">🍫</div>
-        <div class="topping-item" draggable="true" ondragstart="drag(event)">🍓</div>
-        <div class="topping-item" draggable="true" ondragstart="drag(event)">🍬</div>
-        <div class="topping-item" draggable="true" ondragstart="drag(event)">✨</div>
-        <div class="topping-item" draggable="true" ondragstart="drag(event)">🥜</div>
+    <div id="stage2" class="stage">
+        <div id="box-container">
+            <div id="final-cake-preview"></div>
+            <div id="ribbon-horizontal" class="ribbon" style="top: 50%;"></div>
+            <div id="ribbon-vertical" class="ribbon" style="width: 20px; height: 100%; left: 50%; top: 0;"></div>
+        </div>
+        <button onclick="packBox()">리본 묶기 🎀</button>
+        <button id="delivery-btn" onclick="goStage3()" style="display:none; background: #4caf50;">배달 출발! 🛵</button>
     </div>
 
-    <div class="controls">
-        <button onclick="bakeCookie()">오븐에 굽기! 🔥</button>
-        <button onclick="resetGame()" style="background-color: #999; box-shadow: 0 4px 0 #777;">다시 만들기</button>
+    <div id="stage3" class="stage">
+        <div id="delivery-scene">
+            <div id="scooter">🛵 📦</div>
+        </div>
+        <div style="font-size: 50px; margin-top: 20px;">🏠</div>
+        <button onclick="resetGame()">새로 만들기</button>
     </div>
 
     <script>
-        const cookie = document.getElementById('cookie');
-        
-        // 드래그 허용
-        cookie.ondragover = (e) => e.preventDefault();
+        const cake = document.getElementById('cake-base');
+        let cakeHTML = "";
 
-        // 토핑 놓기
-        cookie.ondrop = (e) => {
-            e.preventDefault();
+        // 드래그 앤 드롭
+        cake.ondragover = (e) => e.preventDefault();
+        cake.ondrop = (e) => {
             const emoji = e.dataTransfer.getData("text");
-            
-            // 쿠키 안의 상대 좌표 계산
-            const rect = cookie.getBoundingClientRect();
+            const rect = cake.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
-
-            addTopping(emoji, x, y);
-        };
-
-        function drag(e) {
-            e.dataTransfer.setData("text", e.target.innerText);
-        }
-
-        function addTopping(emoji, x, y) {
+            
             const topping = document.createElement('div');
             topping.className = 'placed-topping';
             topping.innerText = emoji;
             topping.style.left = x + 'px';
             topping.style.top = y + 'px';
+            cake.appendChild(topping);
+        };
+
+        function drag(e) { e.dataTransfer.setData("text", e.target.innerText); }
+
+        // 단계 이동: 포장
+        function goStage2() {
+            cakeHTML = cake.innerHTML;
+            document.getElementById('status-text').innerText = "🎁 예쁘게 포장해요!";
+            document.getElementById('stage1').classList.remove('active');
+            document.getElementById('stage2').classList.add('active');
             
-            // 약간의 랜덤 회전으로 자연스럽게
-            const randomRotate = Math.random() * 360;
-            topping.style.transform = `translate(-50%, -50%) rotate(${randomRotate}deg)`;
-            
-            cookie.appendChild(topping);
+            // 완성된 케이크 복사해서 보여주기
+            const preview = document.getElementById('final-cake-preview');
+            preview.innerHTML = `<div id="cake-base" style="transform: scale(0.7); margin:0;">${cakeHTML}</div>`;
         }
 
-        function bakeCookie() {
-            if (cookie.classList.contains('baked')) return;
+        function packBox() {
+            document.querySelectorAll('.ribbon').forEach(r => r.style.display = 'block');
+            document.getElementById('delivery-btn').style.display = 'inline-block';
+            alert("포장 완료! 이제 배달을 갈 수 있어요.");
+        }
+
+        // 단계 이동: 배달
+        function goStage3() {
+            document.getElementById('status-text').innerText = "🛵 슝슝~ 배달 중!";
+            document.getElementById('stage2').classList.remove('active');
+            document.getElementById('stage3').classList.add('active');
             
-            cookie.classList.add('baked');
-            cookie.style.transform = "scale(1.05)";
-            
+            const scooter = document.getElementById('scooter');
             setTimeout(() => {
-                alert("딩! 🍪 정말 맛있는 쿠키가 구워졌어요!");
-                cookie.style.transform = "scale(1)";
-            }, 2000);
+                scooter.style.left = "calc(100% - 100px)";
+            }, 100);
+
+            setTimeout(() => {
+                alert("딩동! 집 앞에 케이크가 도착했습니다! 🎂");
+                document.getElementById('status-text').innerText = "✅ 배달 완료!";
+            }, 3200);
         }
 
         function resetGame() {
-            cookie.classList.remove('baked');
-            cookie.innerHTML = '';
+            location.reload();
         }
-
-        // 터치 지원을 위한 추가 로직 (아이패드/폰 대응)
-        document.querySelectorAll('.topping-item').forEach(item => {
-            item.addEventListener('touchstart', function(e) {
-                const touch = e.touches[0];
-                const emoji = this.innerText;
-                
-                // 임시로 따라다니는 효과 등은 생략하고, 
-                // 터치 끝날 때 쿠키 위에 있으면 추가하는 방식으로 확장 가능합니다.
-                // 여기서는 드래그 앤 드롭 API 위주로 구성했습니다.
-            });
-        });
     </script>
 </body>
 </html>
