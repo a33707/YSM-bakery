@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>따님을 위한 케이크 제작소</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #fff0f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        h1 { color: #ff69b4; margin-top: 15px; }
+        #status-text { font-size: 1.2rem; color: #d66d87; margin-bottom: 10px; }
+
+        /* 스테이지 관리 */
+        .stage { display: none; flex-direction: column; align-items: center; width: 100%; }
+        .stage.active { display: flex; }
+
+        /* 1단계: 케이크 꾸미기 */
+        #cake-base {
+            width: 280px;
+            height: 200px;
+            background: #ffffff; /* 기본 생크림 */
+            border-radius: 30px;
+            position: relative;
+            box-shadow: 0 10px 0 #f0f0f0, 0 20px 0 #e0e0e0;
+            margin: 20px;
+            cursor: crosshair;
+            overflow: hidden; /* 잼이 밖으로 나가지 않게 */
+        }
+
+        /* 토핑 선택 바 */
+        .topping-bar {
+            display: flex; gap: 10px; padding: 15px;
+            background: white; border-radius: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            flex-wrap: wrap; justify-content: center; max-width: 90%;
+        }
+
+        .topping-item { 
+            font-size: 35px; cursor: pointer; padding: 5px; 
+            border: 3px solid transparent; border-radius: 15px;
+            transition: all 0.2s;
+        }
+        
+        /* 선택된 토핑 강조 */
+        .topping-item.selected {
+            border-color: #ff69b4;
+            background: #ffe4e1;
+            transform: scale(1.1);
+        }
+
+        .placed-topping {
+            position: absolute; font-size: 35px; pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+        }
+
+        /* 잼 토핑 스타일 */
+        .placed-jam {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            pointer-events: none;
+            filter: blur(5px);
+            opacity: 0.8;
+            transform: translate(-50%, -50%);
+            z-index: 1; /* 잼은 다른 토핑보다 아래에 */
+        }
+
+        /* 배달 애니메이션 */
+        #delivery-scene { font-size: 80px; position: relative; width: 100%; height: 150px; margin-top: 50px;}
+        #scooter { position: absolute; left: -120px; transition: left 3s linear; }
+
+        button {
+            margin-top: 20px; padding: 12px 30px; font-size: 18px;
+            border: none; border-radius: 30px; background: #ff69b4;
+            color: white; cursor: pointer; font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 id="status-text">🍓 토핑을 고르고 케이크를 눌러보세요!</h1>
+
+    <div id="stage1" class="stage active">
+        <div id="cake-base" onclick="placeTopping(event)"></div>
+        
+        <div class="topping-bar">
+            <div class="topping-item selected" onclick="selectTopping(this, '🍓', 'emoji')">🍓</div>
+            <div class="topping-item" onclick="selectTopping(this, '🫐', 'emoji')">🫐</div>
+            <div class="topping-item" onclick="selectTopping(this, '🕯️', 'emoji')">🕯️</div>
+            <div class="topping-item" onclick="selectTopping(this, '💖', 'emoji')">💖</div>
+            <div class="topping-item" onclick="selectTopping(this, '🍊', 'emoji')">🍊</div>
+            <div class="topping-item" onclick="selectTopping(this, '🍫', 'emoji')">🍫</div>
+            <div class="topping-item" onclick="selectTopping(this, '#ff0000', 'jam')" title="딸기잼">💉🍓</div>
+            <div class="topping-item" onclick="selectTopping(this, '#4b0082', 'jam')" title="포도잼">💉🍇</div>
+            <div class="topping-item" onclick="selectTopping(this, '#ffd700', 'jam')" title="꿀">💉🍯</div>
+        </div>
+        
+        <button onclick="goStage2()">포장하고 배달하기 👉</button>
+    </div>
+
+    <div id="stage2" class="stage">
+        <div id="delivery-scene">
+            <div id="scooter">🛵 📦</div>
+        </div>
+        <div style="font-size: 60px;">🏠</div>
+        <button onclick="location.reload()">새로 만들기</button>
+    </div>
+
+    <script>
+        let selectedTopping = '🍓';
+        let selectedType = 'emoji'; // 'emoji' 또는 'jam'
+
+        // 토핑 선택 함수
+        function selectTopping(element, value, type) {
+            document.querySelectorAll('.topping-item').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedTopping = value;
+            selectedType = type;
+        }
+
+        // 케이크 클릭 시 토핑 배치
+        function placeTopping(e) {
+            const cake = document.getElementById('cake-base');
+            const rect = cake.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            if (selectedType === 'emoji') {
+                const topping = document.createElement('div');
+                topping.className = 'placed-topping';
+                topping.innerText = selectedTopping;
+                topping.style.left = x + 'px';
+                topping.style.top = y + 'px';
+                // 약간의 랜덤 회전
+                topping.style.transform = `translate(-50%, -50%) rotate(${Math.random() * 40 - 20}deg)`;
+                cake.appendChild(topping);
+            } else {
+                // 잼 배치
+                const jam = document.createElement('div');
+                jam.className = 'placed-jam';
+                jam.style.backgroundColor = selectedTopping;
+                jam.style.left = x + 'px';
+                jam.style.top = y + 'px';
+                // 잼 크기 랜덤화
+                const size = Math.random() * 20 + 30;
+                jam.style.width = size + 'px';
+                jam.style.height = size + 'px';
+                cake.appendChild(jam);
+            }
+        }
+
+        function goStage2() {
+            document.getElementById('status-text').innerText = "🛵 슝슝~ 아빠가 배달 가요!";
+            document.getElementById('stage1').classList.remove('active');
+            document.getElementById('stage2').classList.add('active');
+            
+            const scooter = document.getElementById('scooter');
+            setTimeout(() => {
+                scooter.style.left = "calc(100% - 120px)";
+            }, 100);
+
+            setTimeout(() => {
+                alert("띵동! 따님이 만든 세상에서 가장 맛있는 케이크가 배달되었습니다! 🎂");
+            }, 3200);
+        }
+    </script>
+</body>
+</html>
