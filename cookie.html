@@ -162,6 +162,49 @@
         let level = 1;
         const ranks = ["🍪 쿠키 초보", "🍩 쿠키 견습", "👨‍🍳 쿠키 전문", "👑 쿠키 마스터"];
 
+/* cookie.html의 스크립트 부분 수정 */
+let isDrawingCookie = false;
+let lastCookieDrawTime = 0;
+
+const cookieBase = document.getElementById('cookie-base');
+
+cookieBase.onmousedown = (e) => {
+    isDrawingCookie = true;
+    placeTopping(e);
+};
+
+window.onmouseup = () => {
+    isDrawingCookie = false;
+};
+
+cookieBase.onmousemove = (e) => {
+    if (!isDrawingCookie) return;
+    
+    const now = Date.now();
+    if (now - lastCookieDrawTime > 150) {
+        placeTopping(e);
+        lastCookieDrawTime = now;
+    }
+};
+
+// 터치 기기 대응
+cookieBase.ontouchstart = (e) => {
+    isDrawingCookie = true;
+    placeTopping(e.touches[0]);
+};
+cookieBase.ontouchend = () => {
+    isDrawingCookie = false;
+};
+cookieBase.ontouchmove = (e) => {
+    if (!isDrawingCookie) return;
+    e.preventDefault();
+    const now = Date.now();
+    if (now - lastCookieDrawTime > 150) {
+        placeTopping(e.touches[0]);
+        lastCookieDrawTime = now;
+    }
+};
+
         function selectTopping(el, val, type) {
             document.querySelectorAll('.topping-item').forEach(i => i.classList.remove('selected'));
             el.classList.add('selected');

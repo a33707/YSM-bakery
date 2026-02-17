@@ -145,6 +145,52 @@
         let level = 1;
         const ranks = ["🐣 초보 요리사", "🐥 견습 셰프", "👨‍🍳 전문 요리사", "👑 케이크 마스터"];
 
+/* cake.html의 스크립트 부분 수정 */
+let isDrawing = false;
+let lastDrawTime = 0;
+
+const cakeBase = document.getElementById('cake-base');
+
+// 마우스를 눌렀을 때 시작
+cakeBase.onmousedown = (e) => {
+    isDrawing = true;
+    placeTopping(e); // 클릭한 순간에도 하나 배치
+};
+
+// 마우스를 뗄 때 중지
+window.onmouseup = () => {
+    isDrawing = false;
+};
+
+// 마우스를 움직일 때 연속 배치
+cakeBase.onmousemove = (e) => {
+    if (!isDrawing) return;
+    
+    const now = Date.now();
+    if (now - lastDrawTime > 150) { // 150ms 주기로 토핑 추가
+        placeTopping(e);
+        lastDrawTime = now;
+    }
+};
+
+// 터치 기기(아이패드 등) 대응
+cakeBase.ontouchstart = (e) => {
+    isDrawing = true;
+    placeTopping(e.touches[0]);
+};
+cakeBase.ontouchend = () => {
+    isDrawing = false;
+};
+cakeBase.ontouchmove = (e) => {
+    if (!isDrawing) return;
+    e.preventDefault(); // 스크롤 방지
+    const now = Date.now();
+    if (now - lastDrawTime > 150) {
+        placeTopping(e.touches[0]);
+        lastDrawTime = now;
+    }
+};
+
         function selectTopping(el, val, type) {
             document.querySelectorAll('.topping-item').forEach(i => i.classList.remove('selected'));
             el.classList.add('selected');
