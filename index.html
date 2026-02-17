@@ -1,15 +1,108 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>YSM Bakery</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>창윤네 디저트 가게</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #fff0f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        h1 {
+            color: #ff69b4;
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            text-shadow: 2px 2px 4px white;
+            text-align: center;
+        }
+
+        .selection-container {
+            display: flex;
+            gap: 30px;
+            padding: 20px;
+        }
+
+        .game-card {
+            width: 180px;
+            height: 250px;
+            background: white;
+            border-radius: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            border: 5px solid transparent;
+        }
+
+        .game-card:hover {
+            transform: translateY(-15px) scale(1.05);
+            border-color: #ffb6c1;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        .game-card i {
+            font-size: 80px;
+            margin-bottom: 20px;
+            display: block;
+            font-style: normal;
+        }
+
+        .game-card span {
+            font-size: 22px;
+            font-weight: bold;
+            color: #d66d87;
+        }
+
+        /* 배경 장식 애니메이션 */
+        .deco {
+            position: absolute;
+            font-size: 30px;
+            opacity: 0.2;
+            z-index: -1;
+            animation: float 6s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+    </style>
 </head>
 <body>
-  <h1>YSM Bakery</h1>
-  <ul>
-    <li><a href="cake.html">Cakes</a></li>
-    <li><a href="cookie.html">Cookies</a></li>
-  </ul>
+
+    <div class="deco" style="top:10%; left:10%;">🍩</div>
+    <div class="deco" style="top:20%; right:15%; animation-delay: 1s;">🧁</div>
+    <div class="deco" style="bottom:15%; left:20%; animation-delay: 2s;">🍭</div>
+    <div class="deco" style="bottom:10%; right:10%; animation-delay: 3s;">🍮</div>
+
+    <h1>무엇을 만들어 볼까요?</h1>
+
+    <div class="selection-container">
+        <a href="cookie.html" class="game-card">
+            <i>🍪</i>
+            <span>쿠키 만들기</span>
+        </a>
+
+        <a href="cake.html" class="game-card">
+            <i>🎂</i>
+            <span>케이크 만들기</span>
+        </a>
+    </div>
+
+    <p style="margin-top: 50px; color: #ffb6c1; font-weight: bold;">최고의 요리사가 되어보세요! 👩‍🍳</p>
+
 </body>
 </html>
