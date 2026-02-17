@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #fffaf0; /* 쿠키에 어울리는 배경 */
+            background-color: #fffaf0;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -28,7 +28,7 @@
             margin-bottom: 20px;
         }
         .level-badge {
-            background: #ffc0cb; /* 핑크색 */
+            background: #ffc0cb;
             color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold;
         }
         .exp-bar {
@@ -41,21 +41,21 @@
         /* 쿠키 작업대 */
         #cookie-base {
             width: 250px; height: 250px;
-            background: #f3d5b5; /* 구워진 쿠키색 */
-            border-radius: 50%; /* 동그란 쿠키 */
+            background: #f3d5b5;
+            border-radius: 50%;
             position: relative; box-shadow: 0 8px 0 #d2b48c;
             margin: 20px; cursor: pointer;
-            overflow: hidden; /* 잼이 밖으로 나가지 않게 */
+            overflow: hidden;
         }
 
-        /* 토핑 선택 바 */
+        /* 토핑 선택 바: 16종 대응을 위해 패딩 및 간격 조정 */
         .topping-bar {
-            display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
-            padding: 10px; background: #fff; border-radius: 25px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1); max-width: 90%;
+            display: flex; gap: 6px; flex-wrap: wrap; justify-content: center;
+            padding: 12px; background: #fff; border-radius: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); max-width: 95%;
         }
         .topping-item { 
-            font-size: 30px; cursor: pointer; padding: 6px; 
+            font-size: 28px; cursor: pointer; padding: 5px; 
             border: 3px solid transparent; border-radius: 12px;
             transition: 0.2s;
         }
@@ -64,7 +64,7 @@
         .placed-topping {
             position: absolute; font-size: 30px; pointer-events: none;
             transform: translate(-50%, -50%); animation: pop 0.3s ease-out;
-            z-index: 2; /* 토핑이 잼 위에 오도록 */
+            z-index: 2;
         }
 
         @keyframes pop {
@@ -72,19 +72,17 @@
             100% { transform: translate(-50%, -50%) scale(1); }
         }
 
-        /* 잼 토핑 스타일 */
         .placed-jam {
             position: absolute;
             width: 35px; height: 35px; border-radius: 50%;
             pointer-events: none; filter: blur(4px); opacity: 0.7;
-            transform: translate(-50%, -50%); z-index: 1; /* 잼은 다른 토핑보다 아래에 */
+            transform: translate(-50%, -50%); z-index: 1;
         }
 
         /* 스테이지 */
         .stage { display: none; flex-direction: column; align-items: center; width: 100%; }
         .stage.active { display: flex; }
 
-        /* 결과 화면 (스탬프) */
         #stamp-card {
             padding: 20px; background: white; border: 3px solid #ffc0cb;
             border-radius: 15px; margin-top: 20px; display: none;
@@ -95,6 +93,10 @@
             margin-top: 20px; padding: 12px 30px; font-size: 18px;
             border: none; border-radius: 25px; background: #ffc0cb;
             color: white; cursor: pointer; font-weight: bold;
+        }
+        
+        .home-btn {
+            background: #ccc; margin-left: 10px;
         }
     </style>
 </head>
@@ -118,12 +120,23 @@
             <div class="topping-item" onclick="selectTopping(this, '💖', 'emoji')">💖</div>
             <div class="topping-item" onclick="selectTopping(this, '🌈', 'emoji')">🌈</div>
             <div class="topping-item" onclick="selectTopping(this, '🌟', 'emoji')">🌟</div>
+            <div class="topping-item" onclick="selectTopping(this, '🥨', 'emoji')">🥨</div>
+            <div class="topping-item" onclick="selectTopping(this, '🥜', 'emoji')">🥜</div>
+            <div class="topping-item" onclick="selectTopping(this, '🍒', 'emoji')">🍒</div>
+            <div class="topping-item" onclick="selectTopping(this, '🍪', 'emoji')">🍪</div>
+            <div class="topping-item" onclick="selectTopping(this, '🥛', 'emoji')">🥛</div>
+            <div class="topping-item" onclick="selectTopping(this, '🎨', 'emoji')">🎨</div>
+            <div class="topping-item" onclick="selectTopping(this, '🎁', 'emoji')">🎁</div>
             <div class="topping-item" onclick="selectTopping(this, '#ff0000', 'jam')" title="딸기잼">💉🍓</div>
             <div class="topping-item" onclick="selectTopping(this, '#ffd700', 'jam')" title="꿀">💉🍯</div>
             <div class="topping-item" onclick="selectTopping(this, '#4682b4', 'jam')" title="블루베리잼">💉🫐</div>
+            <div class="topping-item" onclick="selectTopping(this, '#ffffff', 'jam')" title="화이트초코">💉🤍</div>
         </div>
         
-        <button onclick="bakeAndDeliver()">오븐에 굽기 & 배달! 🔥</button>
+        <div style="display:flex;">
+            <button onclick="bakeAndDeliver()">오븐에 굽기 & 배달! 🔥</button>
+            <button onclick="location.href='index.html'" class="home-btn">🏠 홈으로</button>
+        </div>
     </div>
 
     <div id="stage2" class="stage">
@@ -178,7 +191,7 @@
             item.style.top = y + 'px';
             cookie.appendChild(item);
             
-            updateExp(2); // 토핑 배치 시 경험치 획득
+            updateExp(2);
         }
 
         function updateExp(amount) {
@@ -195,8 +208,7 @@
         }
 
         function bakeAndDeliver() {
-            // 구워지는 애니메이션 추가 (선택 사항, 쿠키 베이스 색상 변경 등)
-            document.getElementById('cookie-base').style.backgroundColor = '#c68642'; // 구워진 색
+            document.getElementById('cookie-base').style.backgroundColor = '#c68642';
             alert("🔥 쿠키가 노릇노릇 구워졌어요! 이제 배달 갈까요?");
 
             document.getElementById('stage1').classList.remove('active');
@@ -209,13 +221,13 @@
                 document.getElementById('delivery-status').innerText = "✅ 배달 완료!";
                 document.getElementById('stamp-card').style.display = 'block';
                 document.getElementById('next-btn').style.display = 'block';
-                updateExp(30); // 배달 성공 경험치
+                updateExp(30);
             }, 3200);
         }
 
         function nextCookie() {
             document.getElementById('cookie-base').innerHTML = '';
-            document.getElementById('cookie-base').style.backgroundColor = '#f3d5b5'; // 다시 반죽색으로
+            document.getElementById('cookie-base').style.backgroundColor = '#f3d5b5';
             document.getElementById('stamp-card').style.display = 'none';
             document.getElementById('next-btn').style.display = 'none';
             document.getElementById('scooter').style.left = "0";

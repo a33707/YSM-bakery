@@ -45,10 +45,11 @@
             background: #ffffff; border-radius: 30px;
             position: relative; box-shadow: 0 15px 0 #f0f0f0;
             margin: 30px; cursor: pointer;
+            overflow: hidden;
         }
 
         .topping-item { 
-            font-size: 35px; cursor: pointer; padding: 8px;
+            font-size: 32px; cursor: pointer; padding: 6px;
             border: 3px solid transparent; border-radius: 15px;
             transition: 0.2s;
         }
@@ -57,6 +58,7 @@
         .placed-topping {
             position: absolute; font-size: 35px; pointer-events: none;
             transform: translate(-50%, -50%); animation: pop 0.3s ease-out;
+            z-index: 2;
         }
 
         @keyframes pop {
@@ -79,6 +81,12 @@
             border: none; border-radius: 30px; background: #ff69b4;
             color: white; cursor: pointer; font-weight: bold;
         }
+        
+        /* 홈 버튼 추가 */
+        .home-btn {
+            position: absolute; top: 15px; left: 15px;
+            background: #999; padding: 8px 15px; font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -94,15 +102,24 @@
     <div id="stage1" class="stage active">
         <h2 style="color:#d66d87;">케이크를 멋지게 꾸며봐요!</h2>
         <div id="cake-base" onclick="placeTopping(event)"></div>
-        <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; padding:10px;">
+        <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:center; padding:10px; max-width: 90%;">
             <div class="topping-item selected" onclick="selectTopping(this, '🍓', 'emoji')">🍓</div>
             <div class="topping-item" onclick="selectTopping(this, '🍫', 'emoji')">🍫</div>
+            <div class="topping-item" onclick="selectTopping(this, '🫐', 'emoji')">🫐</div>
+            <div class="topping-item" onclick="selectTopping(this, '🍊', 'emoji')">🍊</div>
             <div class="topping-item" onclick="selectTopping(this, '🍬', 'emoji')">🍬</div>
+            <div class="topping-item" onclick="selectTopping(this, '💖', 'emoji')">💖</div>
+            <div class="topping-item" onclick="selectTopping(this, '🌟', 'emoji')">🌟</div>
             <div class="topping-item" onclick="selectTopping(this, '🕯️', 'emoji')">🕯️</div>
-            <div class="topping-item" onclick="selectTopping(this, '#ff69b4', 'jam')">💉💖</div>
-            <div class="topping-item" onclick="selectTopping(this, '#ffd700', 'jam')">💉🍯</div>
+            <div class="topping-item" onclick="selectTopping(this, '#ff69b4', 'jam')" title="핑크 잼">💉💖</div>
+            <div class="topping-item" onclick="selectTopping(this, '#ffd700', 'jam')" title="꿀">💉🍯</div>
+            <div class="topping-item" onclick="selectTopping(this, '#4b0082', 'jam')" title="포도 잼">💉🍇</div>
+            <div class="topping-item" onclick="selectTopping(this, '#00fa9a', 'jam')" title="민트 시럽">💉🍃</div>
         </div>
-        <button onclick="goStage2()">배달 시작! 🛵</button>
+        <div style="display:flex; gap:10px;">
+            <button onclick="goStage2()">배달 시작! 🛵</button>
+            <button onclick="location.href='index.html'" class="home-btn" style="position:static;">🏠 처음으로</button>
+        </div>
     </div>
 
     <div id="stage2" class="stage">
@@ -157,7 +174,6 @@
             item.style.top = y + 'px';
             cake.appendChild(item);
             
-            // 경험치 살짝 증가
             updateExp(2);
         }
 
@@ -185,7 +201,7 @@
                 document.getElementById('delivery-status').innerText = "✅ 배달 완료!";
                 document.getElementById('stamp-card').style.display = 'block';
                 document.getElementById('next-btn').style.display = 'block';
-                updateExp(30); // 배달 성공 경험치
+                updateExp(30);
             }, 3200);
         }
 
