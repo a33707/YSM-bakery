@@ -12,97 +12,38 @@
             flex-direction: column;
             align-items: center;
             margin: 0;
-            overflow: hidden;
-            touch-action: none;
+            padding-bottom: 80px;
+            overflow-y: auto; /* 모바일 스크롤 허용 */
         }
-
-        /* 헤더 & 레벨 시스템 */
-        header {
-            width: 100%;
-            padding: 15px;
-            background: white;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .level-badge {
-            background: #ff69b4; color: white;
-            padding: 5px 15px; border-radius: 20px; font-weight: bold;
-        }
-        .exp-bar {
-            width: 150px; height: 10px; background: #eee;
-            border-radius: 5px; overflow: hidden;
-        }
-        #exp-fill {
-            width: 0%; height: 100%; background: #ff69b4;
-            transition: width 0.5s;
-        }
-
-        /* 케이크 작업대 */
+        header { width: 100%; padding: 15px; background: white; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .level-badge { background: #ff69b4; color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold; }
+        .exp-bar { width: 120px; height: 10px; background: #eee; border-radius: 5px; overflow: hidden; }
+        #exp-fill { width: 0%; height: 100%; background: #ff69b4; transition: width 0.3s; }
         #cake-base {
-            width: 280px; height: 200px;
-            background: #ffffff; border-radius: 30px;
-            position: relative; box-shadow: 0 15px 0 #f0f0f0;
-            margin: 30px; cursor: pointer;
-            overflow: hidden;
+            width: 280px; height: 200px; background: #ffffff; border-radius: 30px;
+            position: relative; box-shadow: 0 15px 0 #f0f0f0; margin: 30px;
+            overflow: hidden; touch-action: none; /* 케이크 위에서만 스크롤 방지 */
         }
-
-        .topping-item { 
-            font-size: 32px; cursor: pointer; padding: 6px;
-            border: 3px solid transparent; border-radius: 15px;
-            transition: 0.2s;
-        }
-        .topping-item.selected { border-color: #ff69b4; background: #ffe4e1; transform: scale(1.1); }
-
-        .placed-topping {
-            position: absolute; font-size: 35px; pointer-events: none;
-            transform: translate(-50%, -50%); animation: pop 0.3s ease-out;
-            z-index: 2;
-        }
-
-        @keyframes pop {
-            0% { transform: translate(-50%, -50%) scale(0); }
-            100% { transform: translate(-50%, -50%) scale(1); }
-        }
-
-        /* 스테이지 */
+        .topping-bar { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; padding: 10px; max-width: 95%; background: white; border-radius: 20px; }
+        .topping-item { font-size: 30px; cursor: pointer; padding: 5px; border: 3px solid transparent; border-radius: 12px; }
+        .topping-item.selected { border-color: #ff69b4; background: #ffe4e1; }
+        .placed-topping { position: absolute; font-size: 35px; pointer-events: none; transform: translate(-50%, -50%); animation: pop 0.3s ease-out; z-index: 2; }
+        .placed-jam { position: absolute; width: 40px; height: 40px; border-radius: 50%; pointer-events: none; filter: blur(5px); opacity: 0.7; transform: translate(-50%, -50%); z-index: 1; }
+        @keyframes pop { 0% { transform: translate(-50%, -50%) scale(0); } 100% { transform: translate(-50%, -50%) scale(1); } }
         .stage { display: none; flex-direction: column; align-items: center; width: 100%; }
         .stage.active { display: flex; }
-
-        /* 결과 화면 (스탬프) */
-        #stamp-card {
-            padding: 20px; background: white; border: 3px solid #ff69b4;
-            border-radius: 15px; margin-top: 20px; display: none;
-        }
-
-        button {
-            margin-top: 20px; padding: 15px 40px; font-size: 20px;
-            border: none; border-radius: 30px; background: #ff69b4;
-            color: white; cursor: pointer; font-weight: bold;
-        }
-        
-        /* 홈 버튼 추가 */
-        .home-btn {
-            position: absolute; top: 15px; left: 15px;
-            background: #999; padding: 8px 15px; font-size: 14px;
-        }
+        button { margin-top: 20px; padding: 15px 30px; font-size: 18px; border: none; border-radius: 30px; background: #ff69b4; color: white; font-weight: bold; }
+        .home-btn { background: #999; margin-left: 10px; }
     </style>
 </head>
 <body>
-
     <header>
-        <div>
-            <span id="rank-text">🐣 초보 요리사</span>
-            <div class="exp-bar"><div id="exp-fill"></div></div>
-        </div>
+        <div><span id="rank-text">🐣 초보 요리사</span><div class="exp-bar"><div id="exp-fill"></div></div></div>
         <div class="level-badge">LV.<span id="level-num">1</span></div>
     </header>
-
     <div id="stage1" class="stage active">
-        <h2 style="color:#d66d87;">케이크를 멋지게 꾸며봐요!</h2>
-        <div id="cake-base" onclick="placeTopping(event)"></div>
-        <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:center; padding:10px; max-width: 90%;">
+        <div id="cake-base"></div>
+        <div class="topping-bar">
             <div class="topping-item selected" onclick="selectTopping(this, '🍓', 'emoji')">🍓</div>
             <div class="topping-item" onclick="selectTopping(this, '🍫', 'emoji')">🍫</div>
             <div class="topping-item" onclick="selectTopping(this, '🫐', 'emoji')">🫐</div>
@@ -111,155 +52,74 @@
             <div class="topping-item" onclick="selectTopping(this, '💖', 'emoji')">💖</div>
             <div class="topping-item" onclick="selectTopping(this, '🌟', 'emoji')">🌟</div>
             <div class="topping-item" onclick="selectTopping(this, '🕯️', 'emoji')">🕯️</div>
-            <div class="topping-item" onclick="selectTopping(this, '#ff69b4', 'jam')" title="핑크 잼">💉💖</div>
-            <div class="topping-item" onclick="selectTopping(this, '#ffd700', 'jam')" title="꿀">💉🍯</div>
-            <div class="topping-item" onclick="selectTopping(this, '#4b0082', 'jam')" title="포도 잼">💉🍇</div>
-            <div class="topping-item" onclick="selectTopping(this, '#00fa9a', 'jam')" title="민트 시럽">💉🍃</div>
+            <div class="topping-item" onclick="selectTopping(this, '#ff69b4', 'jam')">💉💖</div>
+            <div class="topping-item" onclick="selectTopping(this, '#ffd700', 'jam')">💉🍯</div>
+            <div class="topping-item" onclick="selectTopping(this, '#4b0082', 'jam')">💉🍇</div>
+            <div class="topping-item" onclick="selectTopping(this, '#00fa9a', 'jam')">💉🍃</div>
         </div>
-        <div style="display:flex; gap:10px;">
-            <button onclick="goStage2()">배달 시작! 🛵</button>
-            <button onclick="location.href='index.html'" class="home-btn" style="position:static;">🏠 처음으로</button>
-        </div>
+        <div style="display:flex;"><button onclick="goStage2()">배달 시작! 🛵</button><button onclick="location.href='index.html'" class="home-btn">🏠 홈</button></div>
     </div>
-
     <div id="stage2" class="stage">
-        <h2 id="delivery-status">🛵 손님에게 가는 중...</h2>
-        <div id="scooter-track" style="font-size: 50px; width: 80%; text-align: left; margin-top: 50px;">
-            <span id="scooter" style="position:relative; left:0; transition:3s linear;">🛵📦</span>
+        <h2 id="delivery-status">🛵 배달 중...</h2>
+        <div style="font-size: 40px; width: 80%; position: relative; height: 60px;">
+            <span id="scooter" style="position:absolute; left:0; transition:3s linear;">🛵📦</span>
             <span style="float:right;">🏠</span>
         </div>
-        
-        <div id="stamp-card">
-            <h3>🎉 배달 성공!</h3>
-            <p>손님이 너무 기뻐해요!</p>
-            <div style="font-size: 60px;">💮</div>
-        </div>
-        
-        <button id="next-btn" onclick="nextLevel()" style="display:none;">다음 케이크 만들기</button>
+        <button id="next-btn" onclick="nextLevel()" style="display:none;">다시 만들기</button>
     </div>
-
     <script>
-        let selectedTopping = '🍓';
-        let selectedType = 'emoji';
-        let exp = 0;
-        let level = 1;
+        let selectedTopping = '🍓'; let selectedType = 'emoji'; let exp = 0; let level = 1;
+        let isDrawing = false; let lastDrawTime = 0;
+        const cakeBase = document.getElementById('cake-base');
         const ranks = ["🐣 초보 요리사", "🐥 견습 셰프", "👨‍🍳 전문 요리사", "👑 케이크 마스터"];
-
-/* cake.html의 스크립트 부분 수정 */
-let isDrawing = false;
-let lastDrawTime = 0;
-
-const cakeBase = document.getElementById('cake-base');
-
-// 마우스를 눌렀을 때 시작
-cakeBase.onmousedown = (e) => {
-    isDrawing = true;
-    placeTopping(e); // 클릭한 순간에도 하나 배치
-};
-
-// 마우스를 뗄 때 중지
-window.onmouseup = () => {
-    isDrawing = false;
-};
-
-// 마우스를 움직일 때 연속 배치
-cakeBase.onmousemove = (e) => {
-    if (!isDrawing) return;
-    
-    const now = Date.now();
-    if (now - lastDrawTime > 150) { // 150ms 주기로 토핑 추가
-        placeTopping(e);
-        lastDrawTime = now;
-    }
-};
-
-// 터치 기기(아이패드 등) 대응
-cakeBase.ontouchstart = (e) => {
-    isDrawing = true;
-    placeTopping(e.touches[0]);
-};
-cakeBase.ontouchend = () => {
-    isDrawing = false;
-};
-cakeBase.ontouchmove = (e) => {
-    if (!isDrawing) return;
-    e.preventDefault(); // 스크롤 방지
-    const now = Date.now();
-    if (now - lastDrawTime > 150) {
-        placeTopping(e.touches[0]);
-        lastDrawTime = now;
-    }
-};
 
         function selectTopping(el, val, type) {
             document.querySelectorAll('.topping-item').forEach(i => i.classList.remove('selected'));
-            el.classList.add('selected');
-            selectedTopping = val;
-            selectedType = type;
+            el.classList.add('selected'); selectedTopping = val; selectedType = type;
         }
 
         function placeTopping(e) {
-            const cake = document.getElementById('cake-base');
-            const rect = cake.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+            const rect = cakeBase.getBoundingClientRect();
+            const clientX = e.clientX || (e.touches ? e.touches[0].clientX : 0);
+            const clientY = e.clientY || (e.touches ? e.touches[0].clientY : 0);
+            const x = clientX - rect.left; const y = clientY - rect.top;
+            if(x < 0 || x > rect.width || y < 0 || y > rect.height) return;
 
             const item = document.createElement('div');
             if (selectedType === 'emoji') {
-                item.className = 'placed-topping';
-                item.innerText = selectedTopping;
+                item.className = 'placed-topping'; item.innerText = selectedTopping;
+                item.style.transform = `translate(-50%, -50%) rotate(${Math.random()*40-20}deg)`;
             } else {
-                item.style.position = 'absolute';
-                item.style.width = '40px'; item.style.height = '40px';
-                item.style.backgroundColor = selectedTopping;
-                item.style.borderRadius = '50%'; item.style.filter = 'blur(5px)';
-                item.style.opacity = '0.7'; item.style.zIndex = '1';
-                item.style.transform = 'translate(-50%, -50%)';
+                item.className = 'placed-jam'; item.style.backgroundColor = selectedTopping;
             }
-            item.style.left = x + 'px';
-            item.style.top = y + 'px';
-            cake.appendChild(item);
-            
-            updateExp(2);
+            item.style.left = x + 'px'; item.style.top = y + 'px';
+            cakeBase.appendChild(item); updateExp(1);
         }
+
+        const handleStart = (e) => { isDrawing = true; placeTopping(e); };
+        const handleMove = (e) => {
+            if (!isDrawing) return;
+            const now = Date.now();
+            if (now - lastDrawTime > 150) { placeTopping(e); lastDrawTime = now; }
+        };
+        cakeBase.addEventListener('mousedown', handleStart);
+        window.addEventListener('mouseup', () => isDrawing = false);
+        cakeBase.addEventListener('mousemove', handleMove);
+        cakeBase.addEventListener('touchstart', (e) => { isDrawing = true; placeTopping(e.touches[0]); });
+        cakeBase.addEventListener('touchend', () => isDrawing = false);
+        cakeBase.addEventListener('touchmove', (e) => { if(isDrawing) e.preventDefault(); handleMove(e.touches[0]); }, { passive: false });
 
         function updateExp(amount) {
-            exp += amount;
-            if (exp >= 100) {
-                exp = 0;
-                level++;
-                document.getElementById('level-num').innerText = level;
-                const rankIdx = Math.min(Math.floor(level / 2), ranks.length - 1);
-                document.getElementById('rank-text').innerText = ranks[rankIdx];
-                alert("와아! 레벨업! " + ranks[rankIdx] + "가 되었어요! 🎉");
-            }
+            exp += amount; if (exp >= 100) { exp = 0; level++; document.getElementById('level-num').innerText = level; }
             document.getElementById('exp-fill').style.width = exp + "%";
         }
-
         function goStage2() {
-            document.getElementById('stage1').classList.remove('active');
-            document.getElementById('stage2').classList.add('active');
-            
+            document.getElementById('stage1').classList.remove('active'); document.getElementById('stage2').classList.add('active');
             const scooter = document.getElementById('scooter');
             setTimeout(() => { scooter.style.left = "calc(100% - 60px)"; }, 100);
-
-            setTimeout(() => {
-                document.getElementById('delivery-status').innerText = "✅ 배달 완료!";
-                document.getElementById('stamp-card').style.display = 'block';
-                document.getElementById('next-btn').style.display = 'block';
-                updateExp(30);
-            }, 3200);
+            setTimeout(() => { document.getElementById('delivery-status').innerText = "✅ 배달 완료!"; document.getElementById('next-btn').style.display = 'block'; }, 3200);
         }
-
-        function nextLevel() {
-            document.getElementById('cake-base').innerHTML = '';
-            document.getElementById('stamp-card').style.display = 'none';
-            document.getElementById('next-btn').style.display = 'none';
-            document.getElementById('scooter').style.left = "0";
-            document.getElementById('delivery-status').innerText = "🛵 손님에게 가는 중...";
-            document.getElementById('stage2').classList.remove('active');
-            document.getElementById('stage1').classList.add('active');
-        }
+        function nextLevel() { location.reload(); }
     </script>
 </body>
 </html>
